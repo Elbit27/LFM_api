@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Like
+from .models import Like, Favorite
+
+
 
 class LikeSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
@@ -18,3 +20,13 @@ class LikeSerializer(serializers.ModelSerializer):
             )
         return attrs
 
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        repr['task_title'] = instance.task.title
+        return repr

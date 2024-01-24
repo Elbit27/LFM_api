@@ -1,18 +1,13 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from review.serializers import ReviewSerializer
 
 
 class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'first_name', 'last_name')
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        exclude = ('password',)
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -41,3 +36,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ('password',)
+
+    def to_representation(self, instance):
+        repr = super().to_representation(instance)
+        repr['reviews'] = ReviewSerializer(instance=instance.reviews.all(), many=True).data
+        return repr

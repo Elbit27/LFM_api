@@ -8,7 +8,7 @@ urlpatterns = [
     path('api/v1/accounts/', include('account.urls')),
     path('api/v1/categories/', include('category.urls')),
     path('api/v1/tasks/', include('task.urls')),
-
+    path('api/v1/reviews/', include('review.urls')),
     path('api/v1/likes/', include('like.urls')),
 ]
 

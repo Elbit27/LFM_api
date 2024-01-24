@@ -11,4 +11,11 @@ class Like(models.Model):
     class Meta:
         unique_together = ['owner', 'task']
 
+class Favorite(models.Model):
+    owner = models.ForeignKey('auth.User', related_name='favorites', on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, related_name='favorites', on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['owner', 'task']
+
 
