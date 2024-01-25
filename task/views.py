@@ -1,16 +1,31 @@
-from rest_framework.decorators import action
+from rest_framework import permissions
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Task
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
+
 from . import serializers
+from .models import Task
 from .permissions import IsOwner, IsOwnerOrAdmin
-from rest_framework import permissions
 
 from like.models import Favorite
+from review.serializers import ReviewSerializer
+from respond.serializers import RespondSerializer
+
+
+class StandartResultPagination(PageNumberPagination):
+    page_size = 3
+    page_query_param = 'page'
 
 
 class TaskViewSet(ModelViewSet):
     queryset = Task.objects.all()
+    pagination_class = StandartResultPagination
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ('title', 'body')
+    filterset_fields = ('owner', 'category')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -50,3 +65,19 @@ class TaskViewSet(ModelViewSet):
             favorite.delete()
             return Response({'msg': 'Deleted from Favorites'}, status=204)
         return Response({'msg': 'Favorite Not Found!'}, status=404)
+
+    # ...api/v1/posts/<id>/
+    @action(['GET'], detail=True)
+    def reviews(self, request, pk):
+        task = self.get_object()
+        reviews = task.comments.all()
+        serializer = ReviewSerializer(instance=reviews, many=True)
+        return Response(serializer.data, status=200)
+
+    # .../api/v1/tasks/pk/...
+    @action(['GET'], detail=True)
+    def responds(self, request, pk):
+        task = self.get_object()
+        responds = task.responds.all()
+        serializer = RespondSerializer(instance=responds, many=True)
+        return Response(serializer.data, status=200)

@@ -37,7 +37,7 @@ class TaskCreateUpdateSerializer(serializers.ModelSerializer):
 
 class TaskDetailSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
-    category_name = serializers.ReadOnlyField(source='category.name')
+    category_name = serializers.ReadOnlyField(source='category.name',)
     images = TaskImagesSerializer(many=True, required=False)
 
     class Meta:

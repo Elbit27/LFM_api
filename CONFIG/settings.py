@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'task',
     'review',
     'like',
+    'respond',
 ]
 
 MIDDLEWARE = [
