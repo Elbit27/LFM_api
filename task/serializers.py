@@ -5,11 +5,10 @@ from .models import Task, TaskImage
 class TaskListSerializer(serializers.ModelSerializer):
     owner_username = serializers.ReadOnlyField(source='owner.username')
     category_name = serializers.ReadOnlyField(source='category.name')
-
     class Meta:
         model = Task
         fields = ('id', 'owner', 'owner_username', 'title', 'category', 'category_name',
-                  'start_at', 'finish_till', 'place_of_service', 'address')
+                  'start_at', 'finish_till', 'place_of_service', 'address', 'phone_number')
 
 
 class TaskImagesSerializer(serializers.ModelSerializer):
@@ -21,6 +20,7 @@ class TaskImagesSerializer(serializers.ModelSerializer):
 class TaskCreateUpdateSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
     images = TaskImagesSerializer(many=True, required=False)
+
 
     class Meta:
         model = Task
